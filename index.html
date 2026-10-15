@@ -49,16 +49,15 @@ function render(){
     html += '<div class="jar" style="background:#8b5cf6"><span>SOUL 10%</span><span>₦' + Math.round(income*0.1) + '</span></div>';
     html += '<div class="jar" style="background:#06b6d4"><span>SEED 5%</span><span>₦' + Math.round(income*0.05) + '</span></div>';
 
-    // TARGET DROPDOWN
     html += '<div class="milestone"><h3 style="margin:0">🚀 Road to Riches</h3>';
     html += '<p class="small" style="color:#94a3b8;margin-top:8px">Choose your target:</p>';
     html += '<select id="target" class="target-select" onchange="changeTarget()">';
-    html += '<option value="1000000" ' + (targetGoal==1000000?'selected':'') + '>₦1M - For the Poor (Starter)</option>';
-    html += '<option value="2000000" ' + (targetGoal==2000000?'selected':'') + '>₦2M - Small Boss</option>';
-    html += '<option value="5000000" ' + (targetGoal==5000000?'selected':'') + '>₦5M - Big Boss</option>';
-    html += '<option value="10000000" ' + (targetGoal==10000000?'selected':'') + '>₦10M - For the Rich (Oga)</option>';
-    html += '<option value="20000000" ' + (targetGoal==20000000?'selected':'') + '>₦20M - Millionaire</option>';
-    html += '<option value="50000000" ' + (targetGoal==50000000?'selected':'') + '>₦50M - Big Millionaire</option>';
+    html += '<option value="1000000" ' + (targetGoal==1000000?'selected':'') + '>₦1M - Starter Goal</option>';
+    html += '<option value="2000000" ' + (targetGoal==2000000?'selected':'') + '>₦2M - Growth Goal</option>';
+    html += '<option value="5000000" ' + (targetGoal==5000000?'selected':'') + '>₦5M - Builder Goal</option>';
+    html += '<option value="10000000" ' + (targetGoal==10000000?'selected':'') + '>₦10M - Achiever Goal</option>';
+    html += '<option value="20000000" ' + (targetGoal==20000000?'selected':'') + '>₦20M - Vision Goal</option>';
+    html += '<option value="50000000" ' + (targetGoal==50000000?'selected':'') + '>₦50M - Legacy Goal</option>';
     html += '</select>';
 
     var pct = Math.min((totalSecurity/targetGoal*100), 100).toFixed(2);
@@ -77,7 +76,6 @@ function render(){
       html += '<p style="margin-top:10px">You go reach <b>₦' + (targetGoal/1000000) + 'M in ' + days + ' days</b><br><span class="small" style="color:#94a3b8">~' + months + ' months (~' + years + ' years)</span></p>';
     }
 
-    // Show ladder up to chosen target
     html += '<div style="margin-top:16px;border-top:1px solid #334155;padding-top:12px"><p class="small" style="color:#94a3b8">Your Journey:</p>';
     var steps = [];
     if(targetGoal<=2000000) steps=[1000000,2000000];
