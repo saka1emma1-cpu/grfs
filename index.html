@@ -7,24 +7,31 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f172a">
 <style>
-body{font-family:system-ui;background:#f1f5f9;margin:0;padding:16px;padding-bottom:40px}
-.card{background:white;border-radius:20px;padding:16px;margin-top:16px;box-shadow:0 2px 10px rgba(0,0,0,0.06)}
+body{font-family:system-ui;background:#f1f5f9;margin:0;padding:16px;padding-bottom:50px}
+.card{background:white;border-radius:20px;padding:18px;margin-top:16px;box-shadow:0 2px 10px rgba(0,0,0,0.06)}
 .jar{border-radius:16px;padding:14px 16px;margin:8px 0;color:white;font-weight:800;display:flex;justify-content:space-between}
 input,select{width:100%;padding:16px;border-radius:14px;border:2px solid #e2e8f0;font-size:16px;margin-top:8px;box-sizing:border-box;background:white}
 button{width:100%;padding:16px;border-radius:14px;border:none;background:#0f172a;color:white;font-size:16px;font-weight:800;margin-top:10px;cursor:pointer}
-.small{font-size:12px;color:#64748b;line-height:1.4}
+.small{font-size:12px;color:#64748b;line-height:1.6}
 .hist-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f1f5f9}
 .badge{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;margin-left:6px}
 .need{background:#dcfce7;color:#166534}.want{background:#fee2e2;color:#991b1b}
 .milestone{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);color:white;border-radius:20px;padding:18px;margin-top:16px}
 .milestone b{color:#22c55e}
 .progress{height:12px;background:#334155;border-radius:20px;overflow:hidden;margin-top:10px}
-.progress-fill{height:100%;background:#22c55e;border-radius:20px;transition:width 0.5s}
+.progress-fill{height:100%;background:#22c55e;border-radius:20px}
 .road-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #1e293b}
 .road-item:last-child{border:none}
 .target-select{background:#0f172a;color:white;border:2px solid #334155;font-weight:800}
-.mood-row{display:flex;gap:8px}
-.mood-btn{padding:14px!important;border-radius:14px!important;font-size:20px!important}
+.info{background:linear-gradient(135deg,#ffffff 0%,#f8fafc 100%);border:2px solid #e2e8f0}
+.info h3{margin:0 0 10px}
+.info ul{margin:8px 0 0 18px;padding:0}
+.info li{margin:6px 0;font-size:13px;color:#334155;line-height:1.5}
+.tag{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;margin:4px 4px 0 0}
+.tag-blue{background:#dbeafe;color:#1e40af}.tag-green{background:#dcfce7;color:#166534}.tag-yellow{background:#fef9c3;color:#854d0e}.tag-purple{background:#f3e8ff;color:#6b21a8}
+details{margin-top:12px} summary{font-weight:800;cursor:pointer;color:#0f172a;list-style:none} summary::-webkit-details-marker{display:none}
+summary:after{content:" ▼";font-size:12px;color:#64748b}
+details[open] summary:after{content:" ▲"}
 </style>
 </head>
 <body>
@@ -37,7 +44,34 @@ var targetGoal = Number(localStorage.getItem('grfs_target') || 1000000);
 
 function render(){
   var app = document.getElementById('app');
-  var html = '<h1 style="margin:0">🌱 GRFS</h1><b>Grow Rich From Small</b><p class="small" style="font-size:14px;color:#334155;margin-top:6px">How much entered today?</p>';
+  var html = '<h1 style="margin:0">🌱 GRFS</h1><b>Grow Rich From Small</b>';
+
+  // HOW IT WORKS SECTION
+  html += '<div class="card info"><h3>📖 How GRFS Works</h3><p class="small" style="font-size:13px;color:#0f172a"><b>GRFS = Grow Rich From Small.</b> No big grammar. Small money daily, big money tomorrow.</p>';
+  html += '<details open><summary>💰 Financial Management - 5 Jars</summary><ul>';
+  html += '<li><span class="tag tag-blue">SURVIVAL 50%</span> Food, transport, rent, data. Must survive first.</li>';
+  html += '<li><span class="tag tag-green">SECURITY 20% - Ajo</span> Your future. Never touch. This builds your ₦1M-₦50M. This is your Ajo, your safety.</li>';
+  html += '<li><span class="tag tag-yellow">GROWTH 15%</span> Learn new skill, buy book, course. You grow, money grows.</li>';
+  html += '<li><span class="tag tag-purple">SOUL 10%</span> Give, church, help mama, enjoy small. Life no be only hustle.</li>';
+  html += '<li><span class="tag tag-blue" style="background:#cffafe;color:#155e75">SEED 5%</span> Small business, trial. Plant seed wey go grow.</li>';
+  html += '</ul><p class="small" style="margin-top:10px"><b>How to use:</b> 1) Enter how much enter today 2) See how e share 3) SECURITY adds to your total automatically 4) Choose target (₦1M to ₦50M) 5) Check spend before you buy.</p></details>';
+
+  html += '<details><summary>💜 Emotional Management - Spend Check</summary><ul>';
+  html += '<li><b>Before you spend:</b> Type wetin you wan buy + amount. App go tell you NEED or WANT.</li>';
+  html += '<li><b>NEED = Must:</b> Food, transport, school, health. Buy am if you get survival money.</li>';
+  html += '<li><b>WANT = Pause:</b> Bet, shayo, flex, shoe wey you no need. App go ask: <i>"You sure?"</i> Wait 24hrs before you buy.</li>';
+  html += '<li><b>History:</b> See where your money dey go. If WANT pass NEED, you know you dey emotional spending.</li>';
+  html += '<li><b>Mood:</b> Track how you feel. When stressed, we dey spend anyhow. Check your mood, breathe, no spend.</li>';
+  html += '</ul><p class="small" style="margin-top:10px"><b>Rule:</b> When you vex or sad, no open wallet. Open GRFS first. Write am, wait, decide tomorrow. Small pause saves big money.</p></details>';
+
+  html += '<details><summary>🎯 How Road to Millions Works</summary><ul>';
+  html += '<li>Every day you enter income, 20% goes to SECURITY total.</li>';
+  html += '<li>Choose target: Starter (₦1M) to Legacy (₦50M).</li>';
+  html += '<li>App shows days left. No magic - just consistency. Small small dey fill basket.</li>';
+  html += '<li>When you reach target, celebrate! Then choose bigger target.</li>';
+  html += '</ul></details></div>';
+
+  html += '<p class="small" style="font-size:14px;color:#334155;margin-top:16px">How much entered today?</p>';
   html += '<input id="inc" type="number" inputmode="numeric" placeholder="e.g 6000" value="' + (income||'') + '" />';
   html += '<button onclick="saveIncome()">Share My Money Wisely</button>';
   if(income>0){
@@ -71,7 +105,7 @@ function render(){
     html += '<p class="small" style="color:#cbd5e1;margin-top:6px">' + pct + '% to ₦' + (targetGoal/1000000) + 'M</p>';
 
     if(remain<=0){
-      html += '<p style="margin-top:10px;font-size:18px">🎉 YOU DON REACH ₦' + (targetGoal/1000000) + 'M! OGA!</p>';
+      html += '<p style="margin-top:10px;font-size:18px">🎉 YOU DON REACH ₦' + (targetGoal/1000000) + 'M!</p>';
     } else {
       html += '<p style="margin-top:10px">You go reach <b>₦' + (targetGoal/1000000) + 'M in ' + days + ' days</b><br><span class="small" style="color:#94a3b8">~' + months + ' months (~' + years + ' years)</span></p>';
     }
@@ -82,47 +116,23 @@ function render(){
     else if(targetGoal<=5000000) steps=[1000000,2000000,3000000,4000000,5000000];
     else if(targetGoal<=10000000) steps=[1000000,2000000,3000000,5000000,7000000,10000000];
     else steps=[1000000,5000000,10000000,20000000,50000000].filter(x=>x<=targetGoal);
-
     for(var i=0;i<steps.length;i++){
       var t=steps[i]; var r=t-totalSecurity; if(r<0)r=0; var d=sec>0?Math.ceil(r/sec):0; var done=totalSecurity>=t;
       html+='<div class="road-item"><span>' + (done?'✅':'🎯') + ' <b style="color:' + (done?'#22c55e':'white') + '">₦' + (t>=1000000?(t/1000000)+'M':t) + '</b></span><span class="small" style="color:' + (done?'#22c55e':'#94a3b8') + '">' + (done?'DONE!':'In ' + d + 'd') + '</span></div>';
     }
-    html+='</div><p class="small" style="color:#64748b;margin-top:12px">Small small dey fill basket!</p></div>';
+    html+='</div></div>';
 
-    html += '<div class="card"><h4 style="margin:0 0 8px">⚠️ Spend Check</h4><input id="spendItem" type="text" inputmode="text" placeholder="Wetin you wan buy? e.g. Shoe" /><input id="spend" type="number" inputmode="numeric" placeholder="How much? e.g. 1500" /><select id="type"><option value="need">NEED</option><option value="liability">WANT</option></select><button onclick="checkSpend()">Check Am</button><div id="msg" style="margin-top:12px;font-weight:bold"></div></div>';
-    html += '<div class="card"><h4 style="margin:0 0 8px">📜 History</h4>';
-    if(myHistory.length===0){ html += '<p class="small">No history yet.</p>'; }
-    else { var totalNeed=0,totalWant=0; for(var j=0;j<myHistory.length;j++){ var h=myHistory[j]; if(h.type==='need') totalNeed+=h.amount; else totalWant+=h.amount; html+='<div class="hist-item"><div><b>'+h.item+'</b> - ₦'+h.amount+' <span class="badge '+(h.type==='need'?'need':'want')+'">'+h.type.toUpperCase()+'</span><br><span class="small">'+h.date+'</span></div><div onclick="delHist('+j+')" style="color:#ef4444;font-weight:900;padding:8px">✕</div></div>'; } html+='<p class="small" style="margin-top:12px;font-weight:700">NEED: ₦'+totalNeed+' | WANT: ₦'+totalWant+'</p><button onclick="clearHist()" style="background:#fee2e2;color:#991b1b">Clear History</button>'; }
+    html += '<div class="card"><h4 style="margin:0 0 8px">⚠️ Spend Check - Control Emotion</h4><input id="spendItem" type="text" inputmode="text" placeholder="Wetin you wan buy? e.g. Shoe" /><input id="spend" type="number" inputmode="numeric" placeholder="How much? e.g. 1500" /><select id="type"><option value="need">NEED - Must</option><option value="liability">WANT - Can Wait 24hrs</option></select><button onclick="checkSpend()">Check Am Before You Spend</button><div id="msg" style="margin-top:12px;font-weight:bold"></div><p class="small" style="margin-top:8px">Tip: If na WANT and you dey vex/sad, close wallet. Wait tomorrow.</p></div>';
+    html += '<div class="card"><h4 style="margin:0 0 8px">📜 Your Money Story</h4>';
+    if(myHistory.length===0){ html += '<p class="small">No history yet. Every spend you check go show here.</p>'; }
+    else { var totalNeed=0,totalWant=0; for(var j=0;j<myHistory.length;j++){ var h=myHistory[j]; if(h.type==='need') totalNeed+=h.amount; else totalWant+=h.amount; html+='<div class="hist-item"><div><b>'+h.item+'</b> - ₦'+h.amount+' <span class="badge '+(h.type==='need'?'need':'want')+'">'+h.type.toUpperCase()+'</span><br><span class="small">'+h.date+'</span></div><div onclick="delHist('+j+')" style="color:#ef4444;font-weight:900;padding:8px">✕</div></div>'; } html+='<p class="small" style="margin-top:12px;font-weight:700">NEED: ₦'+totalNeed+' | WANT: ₦'+totalWant+'</p><p class="small">If WANT > NEED, you dey spend based on emotion. Adjust.</p><button onclick="clearHist()" style="background:#fee2e2;color:#991b1b">Clear History</button>'; }
     html+='</div>';
   }
   app.innerHTML = html;
 }
-function saveIncome(){
-  var v = document.getElementById('inc').value;
-  if(!v){ alert('Put amount'); return; }
-  var newIncome = Number(v);
-  var newSec = Math.round(newIncome*0.2);
-  income = newIncome;
-  totalSecurity = Number(localStorage.getItem('grfs_total_security')||0) + newSec;
-  localStorage.setItem('grfs_income', v);
-  localStorage.setItem('grfs_total_security', totalSecurity);
-  render();
-}
-function changeTarget(){
-  var t = Number(document.getElementById('target').value);
-  targetGoal = t;
-  localStorage.setItem('grfs_target', t);
-  render();
-}
-function checkSpend(){
-  var item = document.getElementById('spendItem').value.trim() || 'That thing';
-  var a = Number(document.getElementById('spend').value);
-  var t = document.getElementById('type').value;
-  if(!a){ document.getElementById('msg').innerHTML='Put amount!'; return; }
-  myHistory.unshift({item:item, amount:a, type:t, date:new Date().toLocaleString()});
-  localStorage.setItem('grfs_history', JSON.stringify(myHistory));
-  render();
-}
+function saveIncome(){ var v=document.getElementById('inc').value; if(!v){alert('Put amount');return;} var newIncome=Number(v); var newSec=Math.round(newIncome*0.2); income=newIncome; totalSecurity=Number(localStorage.getItem('grfs_total_security')||0)+newSec; localStorage.setItem('grfs_income',v); localStorage.setItem('grfs_total_security',totalSecurity); render(); }
+function changeTarget(){ var t=Number(document.getElementById('target').value); targetGoal=t; localStorage.setItem('grfs_target',t); render(); }
+function checkSpend(){ var item=document.getElementById('spendItem').value.trim()||'That thing'; var a=Number(document.getElementById('spend').value); var t=document.getElementById('type').value; if(!a){document.getElementById('msg').innerHTML='Put amount!';return;} var warn = t==='liability'? '<br><span style="color:#ef4444">🛑 WANT - Wait 24hrs! You sure you need am?</span>' : '<br><span style="color:#16a34a">✅ NEED - Okay if na from Survival jar</span>'; myHistory.unshift({item:item, amount:a, type:t, date:new Date().toLocaleString()}); localStorage.setItem('grfs_history', JSON.stringify(myHistory)); document.getElementById('msg').innerHTML = item + ' = ₦' + a + warn; setTimeout(render, 1500); }
 function delHist(i){ myHistory.splice(i,1); localStorage.setItem('grfs_history', JSON.stringify(myHistory)); render(); }
 function clearHist(){ if(confirm('Clear?')){ myHistory=[]; localStorage.setItem('grfs_history','[]'); render(); } }
 render();
