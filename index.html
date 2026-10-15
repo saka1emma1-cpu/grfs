@@ -1,19 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GRFS - Grow Rich From Small</title>
 <link rel="manifest" href="manifest.json">
-<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f172a">
 <style>
-body{font-family:system-ui;background:#f8fafc;margin:0;padding:16px}
-.jar{border-radius:16px;padding:12px;margin:8px 0;color:white;font-weight:bold}
-input{width:100%;padding:14px;border-radius:12px;border:2px solid #ddd;font-size:18px}
-button{width:100%;padding:14px;border-radius:12px;border:none;background:#0f172a;color:white;font-size:18px;font-weight:900;margin-top:10px}
+*{box-sizing:border-box} body{font-family:system-ui;background:#f1f5f9;margin:0;padding:16px}
+.card{background:white;border-radius:20px;padding:16px;margin-top:12px}
+.jar{border-radius:16px;padding:14px;margin:8px 0;color:white;font-weight:800;display:flex;justify-content:space-between}
+input,select{width:100%;padding:16px;border-radius:14px;border:2px solid #e2e8f0;font-size:18px;margin-top:8px}
+button{width:100%;padding:16px;border-radius:14px;border:none;background:#0f172a;color:white;font-size:17px;font-weight:900;margin-top:10px}
 </style>
 </head>
 <body>
-<div id="root"></div>
-<script type="module" src="./app.js"></script>
-</body>
-</html>
+<div id="app"></div>
+<script>
+let income = localStorage.getItem('grfs_income') ? Number(localStorage.getItem('grfs_income')) : 0;
+const JARS = [
+ {l:'SURVIVAL - Food, Transport', p:0.5, c:'#0ea5e9'},
+ {l:'SECURITY - Ajo/Savings', p:0.2, c:'#22c55e'},
+ {l:'GROWTH - Skill/Business', p:0.15, c:'#f59e0b'},
+ {l:'SOUL - Emotional Rest', p:0.1, c:'#8b5cf6'},
+ {l:'SEED - Giving', p:0.05, c:'#06b6d4'},
+];
+function render(){
+ const el=document.getElementById('app');
+ el.innerHTML=`
+ <h1>🌱 GRFS</h1><b>Grow Rich From Small</b><p>How much entered today?</p>
+ <input id="inc" type="number" placeholder="e.g 5000" value="${income||''}" />
+ <button id="btn">Share My Money Wisely</button>
+ ${income? `<div style="margin-top:20px">
+ <h3>Your ₦${income} is shared:</h3>
+ ${JARS.map(j=>`<div class="jar" style="background:${j.c}"><span>${j.l}</span><span>₦${Math.round(income*j.p)}</span></div>`).join('')}
+ <div class="card"><h4>⚠️ Spend Check</h4><input id="spend" type="number" placeholder="Wetin you wan buy?" />
+ <select id="type"><option value="need">NEED - brings money tomorrow</option><option value="liability">WANT - Bet, Shayo, Impulse</option></select>
+ <button id="check">Check Am</button><div id="msg" style="margin-top:12px;font-weight:bold"></div></div>
+ <div class="card"><h4>💜 How you feel?</h4><div style="display:flex;gap:8px"><button onclick="mood('Happy')">😊 Happy</button><button onclick="mood('Okay')">😐 Okay</button><button onclick="mood('Stressed')">😔 Stressed</button></div><p id="moodText">${localStorage.getItem('grfs_mood')||''}</p></div>
+ </div>`:''}`;
+ document.getElementById('btn')?.addEventListener('click',()=>{
+  const v=Number(document.getElementById('inc').value); if(!v)return alert('Put amount'); income=v; localStorage.setItem('grfs_income',v); render();
+ });
+ document.getElementById('check')?.addEventListener('click',()=>{
+  const a=Number(document.getElementById('spend').value); const t=document.getElementById('type').value; const m=document.getElementById('msg');
+  if(!a)return; if(t==='liability'){m.innerHTML=`🛑 HOLD ON! ₦
