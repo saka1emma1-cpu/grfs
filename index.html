@@ -36,7 +36,6 @@ function render(){
   var html = '<h1 style="margin:0">🌱 GRFS</h1><b>Grow Rich From Small</b><p class="small" style="font-size:14px;color:#334155;margin-top:6px">How much entered today?</p>';
   html += '<input id="inc" type="number" inputmode="numeric" placeholder="e.g 10000" value="' + (income||'') + '" />';
   html += '<button onclick="saveIncome()">Share My Money Wisely</button>';
-
   if(income>0){
     var sec = Math.round(income*0.2);
     html += '<h3 style="margin-top:20px">Your ₦' + income + ' shared:</h3>';
@@ -45,65 +44,37 @@ function render(){
     html += '<div class="jar" style="background:#f59e0b"><span>GROWTH 15%</span><span>₦' + Math.round(income*0.15) + '</span></div>';
     html += '<div class="jar" style="background:#8b5cf6"><span>SOUL 10%</span><span>₦' + Math.round(income*0.1) + '</span></div>';
     html += '<div class="jar" style="background:#06b6d4"><span>SEED 5%</span><span>₦' + Math.round(income*0.05) + '</span></div>';
-
-    // Road to 1M
     var pct = Math.min((totalSecurity/1000000*100), 100).toFixed(2);
-    var remain = 1000000 - totalSecurity;
-    if(remain < 0) remain = 0;
+    var remain = 1000000 - totalSecurity; if(remain < 0) remain = 0;
     var daysTo1M = sec>0? Math.ceil(remain / sec) : 0;
     html += '<div class="milestone"><h3 style="margin:0">🚀 Road to ₦1,000,000</h3>';
     html += '<p class="small" style="color:#94a3b8">Saving ₦' + sec + ' daily in SECURITY</p>';
     html += '<p>Total Saved: <b>₦' + totalSecurity + '</b> | Remain: <b>₦' + remain + '</b></p>';
     html += '<div class="progress"><div class="progress-fill" style="width:' + pct + '%"></div></div>';
     html += '<p class="small" style="color:#cbd5e1;margin-top:6px">' + pct + '% done</p>';
-    if(daysTo1M>0 && remain>0){ html += '<p style="margin:8px 0 0">You go reach <b style="color:#22c55e">₦1M in ' + daysTo1M + ' days</b> (~' + (daysTo1M/30).toFixed(1) + ' months)</p><p class="small" style="color:#94a3b8">Small small dey fill basket!</p>'; }
-    else if(remain<=0){ html += '<p style="margin:8px 0 0">🎉 YOU DON REACH ₦1M! Oga!</p>'; }
+    if(daysTo1M>0 && remain>0){ html += '<p style="margin:8px 0 0">You go reach <b style="color:#22c55e">₦1M in ' + daysTo1M + ' days</b> (~' + (daysTo1M/30).toFixed(1) + ' months)</p>'; }
+    else if(remain<=0){ html += '<p>🎉 YOU DON REACH ₦1M!</p>'; }
     html += '</div>';
-
-    // Spend Check
-    html += '<div class="card"><h4 style="margin:0 0 8px">⚠️ Spend Check</h4>';
-    html += '<input id="spendItem" type="text" inputmode="text" placeholder="Wetin you wan buy? e.g. Shoe" />';
-    html += '<input id="spend" type="number" inputmode="numeric" placeholder="How much? e.g. 1500" />';
-    html += '<select id="type"><option value="need">NEED - brings money tomorrow</option><option value="liability">WANT - Bet, Shayo, Impulse</option></select>';
-    html += '<button onclick="checkSpend()">Check Am</button><div id="msg" style="margin-top:12px;font-weight:bold;min-height:20px"></div></div>';
-
-    // History
-    html += '<div class="card"><h4 style="margin:0 0 8px">📜 History - Wetin you spend</h4>';
-    if(myHistory.length===0){ html += '<p class="small">No history yet. Check something first.</p>'; }
+    html += '<div class="card"><h4 style="margin:0 0 8px">⚠️ Spend Check</h4><input id="spendItem" type="text" inputmode="text" placeholder="Wetin you wan buy? e.g. Shoe" /><input id="spend" type="number" inputmode="numeric" placeholder="How much? e.g. 1500" /><select id="type"><option value="need">NEED</option><option value="liability">WANT</option></select><button onclick="checkSpend()">Check Am</button><div id="msg" style="margin-top:12px;font-weight:bold"></div></div>';
+    html += '<div class="card"><h4 style="margin:0 0 8px">📜 History</h4>';
+    if(myHistory.length===0){ html += '<p class="small">No history yet.</p>'; }
     else {
-      var totalNeed = 0, totalWant = 0;
-      for(var i=0;i<myHistory.length;i++){
-        var h = myHistory[i];
-        if(h.type==='need') totalNeed += h.amount; else totalWant += h.amount;
-        html += '<div class="hist-item"><div><b>' + h.item + '</b> - ₦' + h.amount + ' <span class="badge ' + (h.type==='need'?'need':'want') + '">' + h.type.toUpperCase() + '</span><br><span class="small">' + h.date + '</span></div><div onclick="delHist(' + i + ')" style="color:#ef4444;font-weight:900;font-size:18px;padding:8px">✕</div></div>';
-      }
-      html += '<p class="small" style="margin-top:12px;font-weight:700">Total NEED: ₦' + totalNeed + ' | Total WANT: ₦' + totalWant + '</p>';
-      html += '<button onclick="clearHist()" style="background:#fee2e2;color:#991b1b">Clear History</button>';
+      var totalNeed=0,totalWant=0;
+      for(var i=0;i<myHistory.length;i++){ var h=myHistory[i]; if(h.type==='need') totalNeed+=h.amount; else totalWant+=h.amount; html+='<div class="hist-item"><div><b>'+h.item+'</b> - ₦'+h.amount+' <span class="badge '+(h.type==='need'?'need':'want')+'">'+h.type.toUpperCase()+'</span><br><span class="small">'+h.date+'</span></div><div onclick="delHist('+i+')" style="color:#ef4444;font-weight:900;padding:8px">✕</div></div>'; }
+      html+='<p class="small" style="margin-top:12px;font-weight:700">NEED: ₦'+totalNeed+' | WANT: ₦'+totalWant+'</p><button onclick="clearHist()" style="background:#fee2e2;color:#991b1b">Clear History</button>';
     }
-    html += '</div>';
-
-    // Mood
-    html += '<div class="card"><h4 style="margin:0 0 12px">💜 How you feel?</h4><div class="mood-row">';
-    html += '<button class="mood-btn" style="background:#dcfce7" onclick="mood(&quot;😊 Happy and in control&quot;)">😊</button>';
-    html += '<button class="mood-btn" style="background:#fef9c3" onclick="mood(&quot;😐 Okay, I try&quot;)">😐</button>';
-    html += '<button class="mood-btn" style="background:#fee2e2" onclick="mood(&quot;😔 Stressed about money&quot;)">😔</button>';
-    html += '</div><p class="small" style="margin-top:10px">' + (localStorage.getItem('grfs_mood')||'Tap how you feel') + '</p></div>';
-    html += '<p style="text-align:center;margin-top:20px;font-size:12px;color:#94a3b8">Small small dey fill basket. You are growing! 🌱</p>';
+    html+='</div>';
+    html+='<div class="card"><h4 style="margin:0 0 12px">💜 How you feel?</h4><div class="mood-row"><button class="mood-btn" style="background:#dcfce7" onclick="mood(&quot;Happy&quot;)">😊</button><button class="mood-btn" style="background:#fef9c3" onclick="mood(&quot;Okay&quot;)">😐</button><button class="mood-btn" style="background:#fee2e2" onclick="mood(&quot;Stressed&quot;)">😔</button></div><p class="small" style="margin-top:10px">'+(localStorage.getItem('grfs_mood')||'')+'</p></div>';
   }
   app.innerHTML = html;
 }
-
 function saveIncome(){
   var v = document.getElementById('inc').value;
   if(!v){ alert('Put amount'); return; }
   var newIncome = Number(v);
-  // Only add difference to total if income changed, to avoid double counting
-  if(newIncome!== income){
-    var newSec = Math.round(newIncome*0.2);
-    if(income===0){ totalSecurity += newSec; }
-    else { totalSecurity += newSec; } // simple: each time you share, you save
-  }
+  var newSec = Math.round(newIncome*0.2);
   income = newIncome;
+  totalSecurity = Number(localStorage.getItem('grfs_total_security')||0) + newSec;
   localStorage.setItem('grfs_income', v);
   localStorage.setItem('grfs_total_security', totalSecurity);
   render();
@@ -111,27 +82,17 @@ function saveIncome(){
 function checkSpend(){
   var itemEl = document.getElementById('spendItem');
   var amtEl = document.getElementById('spend');
-  var typeEl = document.getElementById('type');
-  var msgEl = document.getElementById('msg');
+  var t = document.getElementById('type').value;
   var item = itemEl.value.trim() || 'That thing';
   var a = Number(amtEl.value);
-  var t = typeEl.value;
-  if(!a){ msgEl.innerHTML = 'Put amount first!'; msgEl.style.color='black'; return; }
-  myHistory.unshift({item:item, amount:a, type:t, date:new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString()});
+  if(!a){ document.getElementById('msg').innerHTML='Put amount!'; return; }
+  myHistory.unshift({item:item, amount:a, type:t, date:new Date().toLocaleString()});
   localStorage.setItem('grfs_history', JSON.stringify(myHistory));
-  if(t==='liability'){
-    msgEl.innerHTML = '🛑 HOLD! If you spend ₦' + a + ' on ' + item + ' daily, na ₦' + (a*30) + '/month gone! Put am for SECURITY jar.';
-    msgEl.style.color='red';
-  } else {
-    msgEl.innerHTML = '✅ Good. ' + item + ' is NEED. Make sure e no pass ₦' + Math.round(income*0.5) + '.';
-    msgEl.style.color='green';
-  }
-  itemEl.value = ''; amtEl.value = '';
-  setTimeout(render, 1800);
+  render();
 }
 function delHist(i){ myHistory.splice(i,1); localStorage.setItem('grfs_history', JSON.stringify(myHistory)); render(); }
-function clearHist(){ if(confirm('Clear all history?')){ myHistory=[]; localStorage.setItem('grfs_history','[]'); render(); } }
-function mood(x){ localStorage.setItem('grfs_mood','Today: ' + x + ' - noted. Keep growing!'); render(); }
+function clearHist(){ if(confirm('Clear?')){ myHistory=[]; localStorage.setItem('grfs_history','[]'); render(); } }
+function mood(x){ localStorage.setItem('grfs_mood', x); render(); }
 render();
 </script>
 </body>
