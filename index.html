@@ -19,13 +19,16 @@ button{width:100%;padding:16px;border-radius:14px;border:none;background:#0f172a
 .milestone{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);color:white;border-radius:20px;padding:18px;margin-top:16px}
 .milestone b{color:#22c55e}
 .progress{height:12px;background:#334155;border-radius:20px;overflow:hidden;margin-top:10px}
-.progress-fill{height:100%;background:#22c55e;border-radius:20px;transition:width 0.5s}
+.progress-fill{height:100%;background:#22c55e;border-radius:20px}
 .road-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #1e293b}
 .target-select{background:#0f172a;color:white;border:2px solid #334155;font-weight:800}
 .info{border:2px solid #e2e8f0}
-.sec-box{display:flex;gap:8px;margin-top:10px}
-.sec-box input{flex:2}
-.sec-btn{flex:1;margin-top:8px;padding:14px!important;font-size:13px!important;font-weight:800}
+.info ul{margin:8px 0 0 18px;padding:0}.info li{margin:7px 0;font-size:13px;color:#334155;line-height:1.5}
+.tag{display:inline-block;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:800;margin:2px}
+.tag-blue{background:#dbeafe;color:#1e40af}.tag-green{background:#dcfce7;color:#166534}.tag-yellow{background:#fef9c3;color:#854d0e}.tag-purple{background:#f3e8ff;color:#6b21a8}
+details{margin-top:14px;background:#f8fafc;border-radius:12px;padding:10px 12px} summary{font-weight:800;cursor:pointer;color:#0f172a;list-style:none}
+summary::-webkit-details-marker{display:none} summary:after{content:" ▼";font-size:11px;color:#64748b} details[open] summary:after{content:" ▲"}
+.sec-box{display:flex;gap:8px;margin-top:10px}.sec-box input{flex:2}.sec-btn{flex:1;margin-top:8px;padding:14px!important;font-size:13px!important}
 </style>
 </head>
 <body>
@@ -39,7 +42,32 @@ var targetGoal = Number(localStorage.getItem('grfs_target') || 1000000);
 function render(){
   var app = document.getElementById('app');
   var html = '<h1 style="margin:0">🌱 GRFS</h1><b>Grow Rich From Small</b>';
-  html += '<div class="card info"><h3>📖 How GRFS Works</h3><p class="small">Small money daily, big money tomorrow. If you use SECURITY, pay back later.</p></div>';
+
+  html += '<div class="card info"><h3>📖 How GRFS Works</h3><p class="small" style="color:#0f172a"><b>Small money daily, big money tomorrow.</b> GRFS helps you manage money and emotion.</p>';
+
+  html += '<details open><summary>💰 Financial - 5 Jars (How money is shared)</summary><ul>';
+  html += '<li><span class="tag tag-blue">SURVIVAL 50%</span> Food, transport, rent, data. Must survive first.</li>';
+  html += '<li><span class="tag tag-green">SECURITY 20% - Ajo</span> Your future. Never touch unless emergency. This builds your ₦1M-₦50M. If you use it, pay back later.</li>';
+  html += '<li><span class="tag tag-yellow">GROWTH 15%</span> Learn skill, buy book, course. You grow, money grows.</li>';
+  html += '<li><span class="tag tag-purple">SOUL 10%</span> Give, church, help mama, enjoy small. Life no be only hustle.</li>';
+  html += '<li><span class="tag tag-blue" style="background:#cffafe;color:#155e75">SEED 5%</span> Small business, trial. Plant seed wey go grow.</li>';
+  html += '</ul><p class="small" style="margin-top:8px"><b>How to use:</b> 1) Enter how much entered today 2) Tap Share My Money Wisely 3) 20% adds to SECURITY total automatically 4) Choose target ₦1M to ₦50M 5) Track your journey.</p></details>';
+
+  html += '<details open><summary>💜 Emotional - How it helps your mind</summary><ul>';
+  html += '<li><b>Spend Check:</b> Before you buy, type wetin you wan buy. App asks NEED or WANT.</li>';
+  html += '<li><b>NEED = Must:</b> Food, transport, health, school. Buy if you have survival money.</li>';
+  html += '<li><b>WANT = Pause:</b> Bet, shayo, new shoe wey you no need. App says: Wait 24hrs. If you still want tomorrow, then buy.</li>';
+  html += '<li><b>History:</b> See where money dey go. If WANT > NEED, you dey spend emotionally.</li>';
+  html += '<li><b>Mood:</b> When stressed/vexed, we spend anyhow. Check mood first, breathe, no open wallet.</li>';
+  html += '</ul><p class="small" style="margin-top:8px"><b>Rule:</b> When you vex or sad, no wallet. Open GRFS first. Write am, wait, decide tomorrow. Small pause saves big money.</p></details>';
+
+  html += '<details><summary>🎯 Road to Millions + Spending Savings</summary><ul>';
+  html += '<li>Every day, 20% enters SECURITY total.</li>';
+  html += '<li>Choose target: Starter (₦1M) to Legacy (₦50M).</li>';
+  html += '<li><b>If you spend part of savings:</b> Use the SECURITY Wallet - Use button. Total go reduce, days to target go increase. Real life consequence.</li>';
+  html += '<li><b>If you get extra:</b> Use Pay Back button to return money. Total go increase, days go reduce. No shame, just be honest and replenish.</li>';
+  html += '<li>App no be bank - na mirror. E show you truth.</li>';
+  html += '</ul></details></div>';
 
   html += '<p class="small" style="margin-top:16px">How much entered today?</p>';
   html += '<input id="inc" type="number" inputmode="numeric" placeholder="e.g 6000" value="' + (income||'') + '" />';
@@ -67,62 +95,39 @@ function render(){
 
     var pct = Math.min((totalSecurity/targetGoal*100), 100).toFixed(2);
     var remain = targetGoal - totalSecurity; if(remain<0) remain=0;
-    var days = sec>0? Math.ceil(remain/sec) : 0;
+    var days = sec>0? Math.ceil(remain/sec) : (totalSecurity>0?0:0);
 
-    html += '<p class="small" style="color:#94a3b8;margin-top:12px">Total SECURITY: <b style="color:#22c55e">₦' + totalSecurity + '</b> | Remain to ₦' + (targetGoal/1000000) + 'M: ₦' + remain + '</p>';
+    html += '<p class="small" style="color:#94a3b8;margin-top:12px">Total SECURITY: <b style="color:#22c55e">₦' + totalSecurity + '</b> | Remain: ₦' + remain + '</p>';
     html += '<div class="progress"><div class="progress-fill" style="width:' + pct + '%"></div></div>';
-    html += '<p class="small" style="color:#cbd5e1;margin-top:6px">' + pct + '% to ₦' + (targetGoal/1000000) + 'M' + (remain>0?' - In ' + days + ' days':' - DONE!') + '</p>';
+    html += '<p class="small" style="color:#cbd5e1;margin-top:6px">' + pct + '% to ₦' + (targetGoal/1000000) + 'M' + (remain>0 && days>0?' - In ' + days + ' days (~' + (days/30).toFixed(1) + 'm)':'') + '</p>';
 
-    // USE + PAY BACK
     html += '<div style="margin-top:16px;border-top:1px solid #334155;padding-top:12px">';
     html += '<p class="small" style="color:#fbbf24">💰 SECURITY Wallet - Use or Replenish</p>';
     html += '<div class="sec-box"><input id="secAmount" type="number" inputmode="numeric" placeholder="Amount e.g 500" />';
     html += '<button class="sec-btn" onclick="spendSecurity()" style="background:#ef4444">Use</button>';
     html += '<button class="sec-btn" onclick="repaySecurity()" style="background:#22c55e">Pay Back</button></div>';
-    html += '<p class="small" style="color:#94a3b8;margin-top:6px">Use = emergency, total reduces. Pay Back = return money, total increases. Be honest.</p></div>';
+    html += '<p class="small" style="color:#94a3b8;margin-top:6px">Use = emergency. Pay Back = restore. Be honest.</p></div>';
 
     html += '<div style="margin-top:12px"><p class="small" style="color:#94a3b8">Journey:</p>';
     var steps = []; if(targetGoal<=2000000) steps=[1000000,2000000]; else if(targetGoal<=5000000) steps=[1000000,2000000,3000000,4000000,5000000]; else if(targetGoal<=10000000) steps=[1000000,2000000,3000000,5000000,7000000,10000000]; else steps=[1000000,5000000,10000000,20000000,50000000].filter(x=>x<=targetGoal);
     for(var i=0;i<steps.length;i++){ var t=steps[i]; var r=t-totalSecurity; if(r<0)r=0; var d=sec>0?Math.ceil(r/sec):0; var done=totalSecurity>=t; html+='<div class="road-item"><span>' + (done?'✅':'🎯') + ' <b style="color:' + (done?'#22c55e':'white') + '">₦' + (t/1000000)+'M</b></span><span class="small" style="color:' + (done?'#22c55e':'#94a3b8') + '">' + (done?'DONE!':'In '+d+'d') + '</span></div>'; }
     html+='</div></div>';
 
-    html += '<div class="card"><h4>⚠️ Spend Check</h4><input id="spendItem" type="text" placeholder="Wetin you wan buy?" /><input id="spend" type="number" placeholder="How much?" /><select id="type"><option value="need">NEED - Must</option><option value="liability">WANT - Wait 24hrs</option></select><button onclick="checkSpend()">Check Am</button><div id="msg" style="margin-top:10px;font-weight:bold"></div></div>';
+    html += '<div class="card"><h4>⚠️ Spend Check - Control Emotion</h4><input id="spendItem" type="text" placeholder="Wetin you wan buy?" /><input id="spend" type="number" placeholder="How much?" /><select id="type"><option value="need">NEED - Must</option><option value="liability">WANT - Wait 24hrs</option></select><button onclick="checkSpend()">Check Am Before You Spend</button><div id="msg" style="margin-top:10px;font-weight:bold"></div></div>';
     html += '<div class="card"><h4>📜 Your Money Story</h4>';
     if(myHistory.length===0){ html += '<p class="small">No history yet.</p>'; }
-    else { var totalNeed=0,totalWant=0,totalSecUse=0,totalRepay=0; for(var j=0;j<myHistory.length;j++){ var h=myHistory[j]; if(h.type==='need') totalNeed+=h.amount; else if(h.type==='want') totalWant+=h.amount; else if(h.type==='security') totalSecUse+=h.amount; else if(h.type==='repay') totalRepay+=h.amount; var badgeClass = h.type==='need'?'need':h.type==='want'?'want':h.type==='security'?'sec':'repay'; html+='<div class="hist-item"><div><b>'+h.item+'</b> - ₦'+h.amount+' <span class="badge '+badgeClass+'">'+h.type.toUpperCase()+'</span><br><span class="small">'+h.date+'</span></div><div onclick="delHist('+j+')" style="color:#ef4444;font-weight:900;padding:8px">✕</div></div>'; } html+='<p class="small" style="margin-top:12px;font-weight:700">NEED: ₦'+totalNeed+' | WANT: ₦'+totalWant+'<br>USED FROM SEC: ₦'+totalSecUse+' | PAID BACK: ₦'+totalRepay+'<br>NET SECURITY: ₦'+totalSecurity+'</p><button onclick="clearHist()" style="background:#fee2e2;color:#991b1b">Clear History</button>'; }
+    else { var totalNeed=0,totalWant=0,totalSecUse=0,totalRepay=0; for(var j=0;j<myHistory.length;j++){ var h=myHistory[j]; if(h.type==='need') totalNeed+=h.amount; else if(h.type==='want') totalWant+=h.amount; else if(h.type==='security') totalSecUse+=h.amount; else if(h.type==='repay') totalRepay+=h.amount; var badgeClass = h.type==='need'?'need':h.type==='want'?'want':h.type==='security'?'sec':'repay'; html+='<div class="hist-item"><div><b>'+h.item+'</b> - ₦'+h.amount+' <span class="badge '+badgeClass+'">'+h.type.toUpperCase()+'</span><br><span class="small">'+h.date+'</span></div><div onclick="delHist('+j+')" style="color:#ef4444;font-weight:900;padding:8px">✕</div></div>'; } html+='<p class="small" style="margin-top:12px;font-weight:700">NEED: ₦'+totalNeed+' | WANT: ₦'+totalWant+'<br>USED: ₦'+totalSecUse+' | PAID BACK: ₦'+totalRepay+'<br>NET SECURITY: ₦'+totalSecurity+'</p><button onclick="clearHist()" style="background:#fee2e2;color:#991b1b">Clear History</button>'; }
     html+='</div>';
   }
   app.innerHTML = html;
 }
 function saveIncome(){ var v=document.getElementById('inc').value; if(!v){alert('Put amount');return;} var newIncome=Number(v); var newSec=Math.round(newIncome*0.2); income=newIncome; totalSecurity=Number(localStorage.getItem('grfs_total_security')||0)+newSec; localStorage.setItem('grfs_income',v); localStorage.setItem('grfs_total_security',totalSecurity); render(); }
 function changeTarget(){ var t=Number(document.getElementById('target').value); targetGoal=t; localStorage.setItem('grfs_target',t); render(); }
-function spendSecurity(){
-  var v=Number(document.getElementById('secAmount').value);
-  if(!v){ alert('Put amount'); return; }
-  if(v>totalSecurity){ alert('You no get that much! You get ₦'+totalSecurity); return; }
-  var reason = prompt('Why you dey use SECURITY? (Emergency, School, etc)');
-  if(reason===null) return;
-  if(!confirm('⚠️ Use ₦'+v+' from SECURITY? Remain go be ₦'+(totalSecurity-v))) return;
-  totalSecurity-=v; localStorage.setItem('grfs_total_security', totalSecurity);
-  myHistory.unshift({item: reason||'Used SECURITY', amount:v, type:'security', date:new Date().toLocaleString()});
-  localStorage.setItem('grfs_history', JSON.stringify(myHistory));
-  alert('Don use ₦'+v+'. Remain: ₦'+totalSecurity+'. Remember to pay back when you fit!');
-  render();
-}
-function repaySecurity(){
-  var v=Number(document.getElementById('secAmount').value);
-  if(!v){ alert('Put amount to pay back'); return; }
-  var reason = prompt('Where this pay back from? (e.g. Extra hustle, Bonus)');
-  if(reason===null) return;
-  totalSecurity+=v; localStorage.setItem('grfs_total_security', totalSecurity);
-  myHistory.unshift({item: reason||'Paid back SECURITY', amount:v, type:'repay', date:new Date().toLocaleString()});
-  localStorage.setItem('grfs_history', JSON.stringify(myHistory));
-  alert('Nice! You don pay back ₦'+v+' to SECURITY. New total: ₦'+totalSecurity+' 🔥');
-  render();
-}
-function checkSpend(){ var item=document.getElementById('spendItem').value.trim()||'That thing'; var a=Number(document.getElementById('spend').value); var t=document.getElementById('type').value; if(!a){document.getElementById('msg').innerHTML='Put amount!';return;} myHistory.unshift({item:item, amount:a, type:(t==='liability'?'want':'need'), date:new Date().toLocaleString()}); localStorage.setItem('grfs_history', JSON.stringify(myHistory)); document.getElementById('msg').innerHTML = (t==='liability'?'🛑 WANT - Wait 24hrs!':'✅ NEED - Okay'); setTimeout(render,1200); }
-function delHist(i){ var h=myHistory[i]; if(h.type==='security'){ if(confirm('Return ₦'+h.amount+' to SECURITY?')){ totalSecurity+=h.amount; localStorage.setItem('grfs_total_security', totalSecurity); } } else if(h.type==='repay'){ if(confirm('Remove this pay back? Total SECURITY go reduce by ₦'+h.amount)){ totalSecurity-=h.amount; if(totalSecurity<0) totalSecurity=0; localStorage.setItem('grfs_total_security', totalSecurity); } } myHistory.splice(i,1); localStorage.setItem('grfs_history', JSON.stringify(myHistory)); render(); }
-function clearHist(){ if(confirm('Clear history? SECURITY total no go change.')){ myHistory=[]; localStorage.setItem('grfs_history','[]'); render(); } }
+function spendSecurity(){ var v=Number(document.getElementById('secAmount').value); if(!v){ alert('Put amount'); return; } if(v>totalSecurity){ alert('You no get that much! You get ₦'+totalSecurity); return; } var reason = prompt('Why you dey use SECURITY?'); if(reason===null) return; if(!confirm('Use ₦'+v+'? Remain go be ₦'+(totalSecurity-v))) return; totalSecurity-=v; localStorage.setItem('grfs_total_security', totalSecurity); myHistory.unshift({item: reason||'Used SECURITY', amount:v, type:'security', date:new Date().toLocaleString()}); localStorage.setItem('grfs_history', JSON.stringify(myHistory)); render(); }
+function repaySecurity(){ var v=Number(document.getElementById('secAmount').value); if(!v){ alert('Put amount to pay back'); return; } var reason = prompt('Where this pay back from?'); if(reason===null) return; totalSecurity+=v; localStorage.setItem('grfs_total_security', totalSecurity); myHistory.unshift({item: reason||'Paid back SECURITY', amount:v, type:'repay', date:new Date().toLocaleString()}); localStorage.setItem('grfs_history', JSON.stringify(myHistory)); render(); }
+function checkSpend(){ var item=document.getElementById('spendItem').value.trim()||'That thing'; var a=Number(document.getElementById('spend').value); var t=document.getElementById('type').value; if(!a){document.getElementById('msg').innerHTML='Put amount!';return;} myHistory.unshift({item:item, amount:a, type:(t==='liability'?'want':'need'), date:new Date().toLocaleString()}); localStorage.setItem('grfs_history', JSON.stringify(myHistory)); document.getElementById('msg').innerHTML = (t==='liability'?'🛑 WANT - Wait 24hrs!':'✅ NEED'); setTimeout(render,1200); }
+function delHist(i){ var h=myHistory[i]; if(h.type==='security'){ if(confirm('Return ₦'+h.amount+'?')){ totalSecurity+=h.amount; localStorage.setItem('grfs_total_security', totalSecurity); } } else if(h.type==='repay'){ if(confirm('Remove pay back? Total go reduce by ₦'+h.amount)){ totalSecurity-=h.amount; if(totalSecurity<0) totalSecurity=0; localStorage.setItem('grfs_total_security', totalSecurity); } } myHistory.splice(i,1); localStorage.setItem('grfs_history', JSON.stringify(myHistory)); render(); }
+function clearHist(){ if(confirm('Clear history?')){ myHistory=[]; localStorage.setItem('grfs_history','[]'); render(); } }
 render();
 </script>
 </body>
