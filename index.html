@@ -21,7 +21,7 @@ var income = Number(localStorage.getItem('grfs_income') || 0);
 function render(){
   var app = document.getElementById('app');
   var html = '<h1>🌱 GRFS</h1><b>Grow Rich From Small</b><p>How much entered today?</p>';
-  html += '<input id="inc" type="number" placeholder="e.g 5000" value="' + (income||'') + '" />';
+  html += '<input id="inc" type="number" inputmode="numeric" placeholder="e.g 5000" value="' + (income||'') + '" />';
   html += '<button onclick="saveIncome()">Share My Money Wisely</button>';
   if(income>0){
     html += '<h3>Your N' + income + ' shared:</h3>';
@@ -30,7 +30,7 @@ function render(){
     html += '<div class="jar" style="background:#f59e0b"><span>GROWTH 15%</span><span>N' + Math.round(income*0.15) + '</span></div>';
     html += '<div class="jar" style="background:#8b5cf6"><span>SOUL 10%</span><span>N' + Math.round(income*0.1) + '</span></div>';
     html += '<div class="jar" style="background:#06b6d4"><span>SEED 5%</span><span>N' + Math.round(income*0.05) + '</span></div>';
-    html += '<div class="card"><h4>⚠️ Spend Check</h4><input id="spend" type="number" placeholder="Wetin you wan buy?" /><select id="type"><option value="need">NEED</option><option value="liability">WANT - Bet/Shayo</option></select><button onclick="checkSpend()">Check Am</button><div id="msg" style="margin-top:10px;font-weight:bold"></div></div>';
+    html += '<div class="card"><h4>⚠️ Spend Check</h4><input id="spendItem" type="text" inputmode="text" placeholder="Wetin you wan buy? e.g. Shayo" /><input id="spend" type="number" inputmode="numeric" placeholder="How much? e.g. 2000" /><select id="type"><option value="need">NEED</option><option value="liability">WANT - Bet/Shayo</option></select><button onclick="checkSpend()">Check Am</button><div id="msg" style="margin-top:10px;font-weight:bold"></div></div>';
     html += '<div class="card"><h4>💜 How you feel?</h4><button onclick="mood(&quot;Happy&quot;)">😊 Happy</button><button onclick="mood(&quot;Okay&quot;)">😐 Okay</button><button onclick="mood(&quot;Stressed&quot;)">😔 Stressed</button><p id="moodText">' + (localStorage.getItem('grfs_mood')||'') + '</p></div>';
   }
   app.innerHTML = html;
@@ -43,12 +43,13 @@ function saveIncome(){
   render();
 }
 function checkSpend(){
+  var item = document.getElementById('spendItem').value || 'That thing';
   var a = Number(document.getElementById('spend').value);
   var t = document.getElementById('type').value;
   var m = document.getElementById('msg');
-  if(!a) return;
-  if(t==='liability'){ m.innerHTML = 'HOLD! N' + a + ' daily = N' + (a*30) + ' per month gone! Put for SECURITY!'; m.style.color='red'; }
-  else { m.innerHTML = 'Good. Make sure e no pass N' + Math.round(income*0.5); m.style.color='green'; }
+  if(!a){ m.innerHTML = 'Put amount first!'; m.style.color='black'; return; }
+  if(t==='liability'){ m.innerHTML = '🛑 HOLD! ' + item + ' = N' + a + ' daily = N' + (a*30) + ' per month gone! Put for SECURITY!'; m.style.color='red'; }
+  else { m.innerHTML = '✅ Good. ' + item + ' is NEED. Make sure e no pass N' + Math.round(income*0.5); m.style.color='green'; }
 }
 function mood(x){ localStorage.setItem('grfs_mood', x); alert('Noted: ' + x); render(); }
 render();
