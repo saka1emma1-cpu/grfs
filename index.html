@@ -29,6 +29,8 @@ button{width:100%;padding:16px;border-radius:14px;border:none;background:#0f172a
 details{margin-top:14px;background:#f8fafc;border-radius:12px;padding:10px 12px} summary{font-weight:800;cursor:pointer;color:#0f172a;list-style:none}
 summary::-webkit-details-marker{display:none} summary:after{content:" ▼";font-size:11px;color:#64748b} details[open] summary:after{content:" ▲"}
 .sec-box{display:flex;gap:8px;margin-top:10px}.sec-box input{flex:2}.sec-btn{flex:1;margin-top:8px;padding:14px!important;font-size:13px!important}
+.honest-box{display:flex;align-items:center;gap:8px;background:#fffbeb;border:2px solid #fde68a;border-radius:12px;padding:10px 12px;margin-top:12px}
+.honest-box input{width:auto;margin:0}
 </style>
 </head>
 <body>
@@ -51,7 +53,7 @@ function render(){
   html += '<li><span class="tag tag-yellow">GROWTH 15%</span> Learn skill, buy book, course. You grow, money grows.</li>';
   html += '<li><span class="tag tag-purple">SOUL 10%</span> Give, church, help mama, enjoy small. Life no be only hustle.</li>';
   html += '<li><span class="tag tag-blue" style="background:#cffafe;color:#155e75">SEED 5%</span> Small business, trial. Plant seed wey go grow.</li>';
-  html += '</ul><p class="small" style="margin-top:8px"><b>How to use:</b> 1) Enter how much entered today 2) Tap Share My Money Wisely 3) 20% adds to SECURITY total automatically 4) Choose target ₦1M to ₦50M 5) Track your journey.</p></details>';
+  html += '</ul><p class="small" style="margin-top:8px"><b>How to use:</b> 1) Enter how much entered today 2) Check honesty box 3) Tap Share My Money Wisely 4) 20% adds to SECURITY total automatically 5) Choose target ₦1M to ₦50M 6) Track your journey.</p></details>';
 
   html += '<details open><summary>💜 Emotional - How it helps your mind</summary><ul>';
   html += '<li><b>Spend Check:</b> Before you buy, type wetin you wan buy. App asks NEED or WANT.</li>';
@@ -61,16 +63,24 @@ function render(){
   html += '<li><b>Mood:</b> When stressed/vexed, we spend anyhow. Check mood first, breathe, no open wallet.</li>';
   html += '</ul><p class="small" style="margin-top:8px"><b>Rule:</b> When you vex or sad, no wallet. Open GRFS first. Write am, wait, decide tomorrow. Small pause saves big money.</p></details>';
 
+  html += '<details open><summary>🔒 Honesty - Does app know if you really have money?</summary><ul>';
+  html += '<li><b>GRFS no be bank, no hold your money.</b> E be like diary, like Ajo book. Na you write truth.</li>';
+  html += '<li><b>How e know?</b> E no know. E trust you. Just like weight loss app no know if you chop burger. If you lie, na yourself you dey cheat.</li>';
+  html += '<li><b>Why this better?</b> No bank account needed, no fear of app stealing money, anybody fit use even with ₦500. E train discipline.</li>';
+  html += '<li><b>Proof na your life:</b> If you write ₦6000 but you get ₦0 for hand, your SECURITY go show ₦1200 but your real pocket empty. Month end, na you go feel am. So be honest.</li>';
+  html += '<li><b>Use + Pay Back:</b> If you spend from SECURITY, click Use. If you get extra, click Pay Back. App show consequence: progress bar go down or up.</li>';
+  html += '</ul><p class="small" style="margin-top:8px;background:#fffbeb;border:1px dashed #f59e0b;padding:8px;border-radius:8px"><b>⚠️ Note:</b> GRFS no hold your money for bank. Na YOU hold your money. GRFS hold your honesty. Be honest, your future go thank you.</p></details>';
+
   html += '<details><summary>🎯 Road to Millions + Spending Savings</summary><ul>';
   html += '<li>Every day, 20% enters SECURITY total.</li>';
   html += '<li>Choose target: Starter (₦1M) to Legacy (₦50M).</li>';
-  html += '<li><b>If you spend part of savings:</b> Use the SECURITY Wallet - Use button. Total go reduce, days to target go increase. Real life consequence.</li>';
+  html += '<li><b>If you spend part of savings:</b> Use SECURITY Wallet - Use button. Total go reduce, days go increase. Real life consequence.</li>';
   html += '<li><b>If you get extra:</b> Use Pay Back button to return money. Total go increase, days go reduce. No shame, just be honest and replenish.</li>';
-  html += '<li>App no be bank - na mirror. E show you truth.</li>';
   html += '</ul></details></div>';
 
   html += '<p class="small" style="margin-top:16px">How much entered today?</p>';
   html += '<input id="inc" type="number" inputmode="numeric" placeholder="e.g 6000" value="' + (income||'') + '" />';
+  html += '<div class="honest-box"><input id="honest" type="checkbox" checked /><label for="honest" class="small" style="color:#92400e;font-weight:700">I promise to be honest - this money really entered today. GRFS na mirror, not bank.</label></div>';
   html += '<button onclick="saveIncome()">Share My Money Wisely</button>';
   if(income>0 || totalSecurity>0){
     var sec = Math.round(income*0.2);
@@ -121,7 +131,13 @@ function render(){
   }
   app.innerHTML = html;
 }
-function saveIncome(){ var v=document.getElementById('inc').value; if(!v){alert('Put amount');return;} var newIncome=Number(v); var newSec=Math.round(newIncome*0.2); income=newIncome; totalSecurity=Number(localStorage.getItem('grfs_total_security')||0)+newSec; localStorage.setItem('grfs_income',v); localStorage.setItem('grfs_total_security',totalSecurity); render(); }
+function saveIncome(){
+  var v=document.getElementById('inc').value;
+  if(!v){alert('Put amount');return;}
+  var honest=document.getElementById('honest');
+  if(honest &&!honest.checked){ alert('Check the honesty box first. Promise to be honest? GRFS na mirror.'); return; }
+  var newIncome=Number(v); var newSec=Math.round(newIncome*0.2); income=newIncome; totalSecurity=Number(localStorage.getItem('grfs_total_security')||0)+newSec; localStorage.setItem('grfs_income',v); localStorage.setItem('grfs_total_security',totalSecurity); render();
+}
 function changeTarget(){ var t=Number(document.getElementById('target').value); targetGoal=t; localStorage.setItem('grfs_target',t); render(); }
 function spendSecurity(){ var v=Number(document.getElementById('secAmount').value); if(!v){ alert('Put amount'); return; } if(v>totalSecurity){ alert('You no get that much! You get ₦'+totalSecurity); return; } var reason = prompt('Why you dey use SECURITY?'); if(reason===null) return; if(!confirm('Use ₦'+v+'? Remain go be ₦'+(totalSecurity-v))) return; totalSecurity-=v; localStorage.setItem('grfs_total_security', totalSecurity); myHistory.unshift({item: reason||'Used SECURITY', amount:v, type:'security', date:new Date().toLocaleString()}); localStorage.setItem('grfs_history', JSON.stringify(myHistory)); render(); }
 function repaySecurity(){ var v=Number(document.getElementById('secAmount').value); if(!v){ alert('Put amount to pay back'); return; } var reason = prompt('Where this pay back from?'); if(reason===null) return; totalSecurity+=v; localStorage.setItem('grfs_total_security', totalSecurity); myHistory.unshift({item: reason||'Paid back SECURITY', amount:v, type:'repay', date:new Date().toLocaleString()}); localStorage.setItem('grfs_history', JSON.stringify(myHistory)); render(); }
