@@ -16,7 +16,6 @@ button{width:100%;padding:14px;border-radius:12px;border:none;background:#0f172a
 .hist-item{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f5f9}
 .milestone{background:#0f172a;color:#fff;border-radius:18px;padding:16px;margin-top:14px}
 .progress{height:10px;background:#334155;border-radius:10px;overflow:hidden;margin-top:8px}.progress-fill{height:100%;background:#22c55e}
-.road-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #1e293b}
 .target-select{background:#0f172a;color:#fff;border:2px solid #334155;font-weight:800}
 details{margin-top:10px;background:#f8fafc;border-radius:10px;padding:8px 10px}summary{font-weight:800;cursor:pointer}
 .sec-box{display:flex;gap:6px;margin-top:8px}.sec-box input{flex:2}.sec-btn{flex:1;font-size:.9em!important}
@@ -52,5 +51,10 @@ details{margin-top:10px;background:#f8fafc;border-radius:10px;padding:8px 10px}s
 <button onclick="closeSettings()" style="background:#f1f5f9;color:#0f172a;margin-top:12px">Close</button>
 </div></div>
 <div id="app"></div>
-<script src="app.js?v=5"></script>
+<script src="app.js?v=6"></script>
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').then(()=>console.log('GRFS offline ready'));
+}
+</script>
 </body></html>
