@@ -10,7 +10,7 @@
 body{font-family:system-ui;background:#f1f5f9;margin:0;padding:16px}
 .card{background:white;border-radius:20px;padding:16px;margin-top:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
 .jar{border-radius:16px;padding:14px;margin:8px 0;color:white;font-weight:800;display:flex;justify-content:space-between}
-input,select{width:100%;padding:16px;border-radius:14px;border:2px solid #e2e8f0;font-size:18px;margin-top:8px}
+input,select{width:100%;padding:16px;border-radius:14px;border:2px solid #e2e8f0;font-size:18px;margin-top:8px;box-sizing:border-box}
 button{width:100%;padding:16px;border-radius:14px;border:none;background:#0f172a;color:white;font-size:17px;font-weight:900;margin-top:10px}
 .small{font-size:12px;color:#64748b}
 .hist-item{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:14px}
@@ -24,7 +24,7 @@ button{width:100%;padding:16px;border-radius:14px;border:none;background:#0f172a
 <div id="app"></div>
 <script>
 var income = Number(localStorage.getItem('grfs_income') || 0);
-var history = JSON.parse(localStorage.getItem('grfs_history') || '[]');
+var myHistory = JSON.parse(localStorage.getItem('grfs_history') || '[]');
 var totalSecurity = Number(localStorage.getItem('grfs_total_security') || 0);
 
 function render(){
@@ -41,39 +41,31 @@ function render(){
     html += '<div class="jar" style="background:#8b5cf6"><span>SOUL 10%</span><span>N' + Math.round(income*0.1) + '</span></div>';
     html += '<div class="jar" style="background:#06b6d4"><span>SEED 5%</span><span>N' + Math.round(income*0.05) + '</span></div>';
 
-    // PROJECTION TO 1 MILLION
-    var dailySave = sec; // assuming income entered is daily
+    var dailySave = sec;
     var daysTo1M = dailySave>0? Math.ceil(1000000 / dailySave) : 0;
     var months = (daysTo1M/30).toFixed(1);
-    var years = (daysTo1M/365).toFixed(1);
     html += '<div class="milestone"><h3 style="margin:0">🚀 Road to ₦1,000,000</h3>';
-    html += '<p class="small" style="color:#94a3b8">Based on saving N' + dailySave + ' daily (SECURITY)</p>';
-    html += '<p>Total Security Saved: <b>N' + totalSecurity + '</b></p>';
-    html += '<p>Remaining to ₦1M: <b>N' + (1000000 - totalSecurity) + '</b></p>';
-    if(daysTo1M>0){
-      html += '<p>You go reach <b>₦1M in ' + daysTo1M + ' days</b> (~' + months + ' months / ' + years + ' years) if you keep this pace.</p>';
-      html += '<p style="font-size:13px">Small small dey fill basket! Keep feeding SECURITY jar.</p>';
-    }
+    html += '<p class="small" style="color:#94a3b8">Saving N' + dailySave + ' daily</p>';
+    html += '<p>Total Saved: <b>N' + totalSecurity + '</b> | Remain: <b>N' + (1000000 - totalSecurity) + '</b></p>';
+    if(daysTo1M>0){ html += '<p>You go reach ₦1M in <b>' + daysTo1M + ' days</b> (~' + months + ' months)</p>'; }
     html += '</div>';
 
     html += '<div class="card"><h4>⚠️ Spend Check</h4><input id="spendItem" type="text" inputmode="text" placeholder="Wetin you wan buy? e.g. Shoe" /><input id="spend" type="number" inputmode="numeric" placeholder="How much? e.g. 1500" /><select id="type"><option value="need">NEED</option><option value="liability">WANT - Bet/Shayo</option></select><button onclick="checkSpend()">Check Am</button><div id="msg" style="margin-top:10px;font-weight:bold"></div></div>';
 
-    // HISTORY
-    html += '<div class="card"><h4>📜 History - Wetin you spend</h4>';
-    if(history.length===0){ html += '<p class="small">No history yet. Check something first.</p>'; }
+    html += '<div class="card"><h4>📜 History</h4>';
+    if(myHistory.length===0){ html += '<p class="small">No history yet.</p>'; }
     else {
       var totalNeed = 0, totalWant = 0;
-      for(var i=0;i<history.length;i++){
-        var h = history[i];
+      for(var i=0;i<myHistory.length;i++){
+        var h = myHistory[i];
         if(h.type==='need') totalNeed += h.amount; else totalWant += h.amount;
         html += '<div class="hist-item"><span><b>' + h.item + '</b> - N' + h.amount + ' <span class="badge ' + (h.type==='need'?'need':'want') + '">' + h.type + '</span><br><span class="small">' + h.date + '</span></span><span onclick="delHist(' + i + ')" style="color:red;font-weight:800">✕</span></div>';
       }
-      html += '<p class="small" style="margin-top:10px">Total NEED: N' + totalNeed + ' | Total WANT: N' + totalWant + '</p>';
+      html += '<p class="small">NEED: N' + totalNeed + ' | WANT: N' + totalWant + '</p>';
       html += '<button onclick="clearHist()" style="background:#fee2e2;color:#991b1b">Clear History</button>';
     }
     html += '</div>';
-
-    html += '<div class="card"><h4>💜 How you feel?</h4><div style="display:flex;gap:8px"><button onclick="mood(&quot;Happy&quot;)">😊 Happy</button><button onclick="mood(&quot;Okay&quot;)">😐 Okay</button><button onclick="mood(&quot;Stressed&quot;)">😔 Stressed</button></div><p id="moodText" class="small" style="margin-top:8px">' + (localStorage.getItem('grfs_mood')||'') + '</p></div>';
+    html += '<div class="card"><h4>💜 How you feel?</h4><div style="display:flex;gap:8px"><button onclick="mood(&quot;Happy&quot;)">😊</button><button onclick="mood(&quot;Okay&quot;)">😐</button><button onclick="mood(&quot;Stressed&quot;)">😔</button></div><p class="small">' + (localStorage.getItem('grfs_mood')||'') + '</p></div>';
   }
   app.innerHTML = html;
 }
@@ -88,20 +80,23 @@ function saveIncome(){
   render();
 }
 function checkSpend(){
-  var item = document.getElementById('spendItem').value || 'That thing';
-  var a = Number(document.getElementById('spend').value);
-  var t = document.getElementById('type').value;
-  var m = document.getElementById('msg');
-  if(!a){ m.innerHTML = 'Put amount first!'; return; }
-  // save to history
-  history.unshift({item:item, amount:a, type:t, date:new Date().toLocaleString()});
-  localStorage.setItem('grfs_history', JSON.stringify(history));
-  if(t==='liability'){ m.innerHTML = '🛑 HOLD! ' + item + ' = N' + a + ' daily = N' + (a*30) + ' per month gone! Saved to history as WANT.'; m.style.color='red'; }
-  else { m.innerHTML = '✅ Good. ' + item + ' is NEED. Make sure e no pass N' + Math.round(income*0.5) + '. Saved!'; m.style.color='green'; }
-  render();
+  var itemEl = document.getElementById('spendItem');
+  var amtEl = document.getElementById('spend');
+  var typeEl = document.getElementById('type');
+  var msgEl = document.getElementById('msg');
+  var item = itemEl.value || 'That thing';
+  var a = Number(amtEl.value);
+  var t = typeEl.value;
+  if(!a){ msgEl.innerHTML = 'Put amount first!'; return; }
+  myHistory.unshift({item:item, amount:a, type:t, date:new Date().toLocaleDateString()});
+  localStorage.setItem('grfs_history', JSON.stringify(myHistory));
+  if(t==='liability'){ msgEl.innerHTML = '🛑 HOLD! ' + item + ' = N' + a + ' daily = N' + (a*30) + '/month!'; msgEl.style.color='red'; }
+  else { msgEl.innerHTML = '✅ Good. ' + item + ' is NEED. Max N' + Math.round(income*0.5); msgEl.style.color='green'; }
+  // Don't call render immediately so message shows, then render after 1.5 sec
+  setTimeout(render, 1500);
 }
-function delHist(i){ history.splice(i,1); localStorage.setItem('grfs_history', JSON.stringify(history)); render(); }
-function clearHist(){ if(confirm('Clear all history?')){ history=[]; localStorage.setItem('grfs_history','[]'); render(); } }
+function delHist(i){ myHistory.splice(i,1); localStorage.setItem('grfs_history', JSON.stringify(myHistory)); render(); }
+function clearHist(){ if(confirm('Clear all?')){ myHistory=[]; localStorage.setItem('grfs_history','[]'); render(); } }
 function mood(x){ localStorage.setItem('grfs_mood', x); render(); }
 render();
 </script>
