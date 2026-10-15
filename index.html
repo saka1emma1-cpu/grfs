@@ -18,10 +18,11 @@ button{width:100%;padding:16px;border-radius:14px;border:none;background:#0f172a
 .need{background:#dcfce7;color:#166534}.want{background:#fee2e2;color:#991b1b}
 .milestone{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);color:white;border-radius:20px;padding:18px;margin-top:16px}
 .milestone b{color:#22c55e}
-.progress{height:10px;background:#334155;border-radius:20px;overflow:hidden;margin-top:10px}
-.progress-fill{height:100%;background:#22c55e;border-radius:20px}
+.progress{height:12px;background:#334155;border-radius:20px;overflow:hidden;margin-top:10px}
+.progress-fill{height:100%;background:#22c55e;border-radius:20px;transition:width 0.5s}
 .road-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #1e293b}
 .road-item:last-child{border:none}
+.target-select{background:#0f172a;color:white;border:2px solid #334155;font-weight:800}
 .mood-row{display:flex;gap:8px}
 .mood-btn{padding:14px!important;border-radius:14px!important;font-size:20px!important}
 </style>
@@ -32,6 +33,7 @@ button{width:100%;padding:16px;border-radius:14px;border:none;background:#0f172a
 var income = Number(localStorage.getItem('grfs_income') || 0);
 var myHistory = JSON.parse(localStorage.getItem('grfs_history') || '[]');
 var totalSecurity = Number(localStorage.getItem('grfs_total_security') || 0);
+var targetGoal = Number(localStorage.getItem('grfs_target') || 1000000);
 
 function render(){
   var app = document.getElementById('app');
@@ -47,33 +49,53 @@ function render(){
     html += '<div class="jar" style="background:#8b5cf6"><span>SOUL 10%</span><span>₦' + Math.round(income*0.1) + '</span></div>';
     html += '<div class="jar" style="background:#06b6d4"><span>SEED 5%</span><span>₦' + Math.round(income*0.05) + '</span></div>';
 
-    // ROAD TO 10M - 1M to 10M
-    var pct10 = Math.min((totalSecurity/10000000*100), 100).toFixed(2);
-    html += '<div class="milestone"><h3 style="margin:0">🚀 Road to ₦10,000,000</h3>';
-    html += '<p class="small" style="color:#94a3b8">Saving ₦' + sec + ' daily | Total: ₦' + totalSecurity + '</p>';
-    html += '<div class="progress"><div class="progress-fill" style="width:' + pct10 + '%"></div></div>';
-    html += '<p class="small" style="color:#cbd5e1;margin-top:6px">' + pct10 + '% to ₦10M</p><div style="margin-top:14px">';
+    // TARGET DROPDOWN
+    html += '<div class="milestone"><h3 style="margin:0">🚀 Road to Riches</h3>';
+    html += '<p class="small" style="color:#94a3b8;margin-top:8px">Choose your target:</p>';
+    html += '<select id="target" class="target-select" onchange="changeTarget()">';
+    html += '<option value="1000000" ' + (targetGoal==1000000?'selected':'') + '>₦1M - For the Poor (Starter)</option>';
+    html += '<option value="2000000" ' + (targetGoal==2000000?'selected':'') + '>₦2M - Small Boss</option>';
+    html += '<option value="5000000" ' + (targetGoal==5000000?'selected':'') + '>₦5M - Big Boss</option>';
+    html += '<option value="10000000" ' + (targetGoal==10000000?'selected':'') + '>₦10M - For the Rich (Oga)</option>';
+    html += '<option value="20000000" ' + (targetGoal==20000000?'selected':'') + '>₦20M - Millionaire</option>';
+    html += '<option value="50000000" ' + (targetGoal==50000000?'selected':'') + '>₦50M - Big Millionaire</option>';
+    html += '</select>';
 
-    var targets = [1000000,2000000,3000000,4000000,5000000,6000000,7000000,8000000,9000000,10000000];
-    for(var i=0;i<targets.length;i++){
-      var t = targets[i];
-      var remain = t - totalSecurity; if(remain<0) remain=0;
-      var days = sec>0? Math.ceil(remain / sec) : 0;
-      var done = totalSecurity >= t;
-      html += '<div class="road-item"><span>' + (done?'✅':'🎯') + ' <b style="color:' + (done?'#22c55e':'white') + '">₦' + (t/1000000) + 'M</b> ' + (done?' DONE!':'') + '</span><span class="small" style="color:' + (done?'#22c55e':'#94a3b8') + '">' + (done?'Reached':'In ' + days + 'd (~' + (days/30).toFixed(1) + 'm)') + '</span></div>';
+    var pct = Math.min((totalSecurity/targetGoal*100), 100).toFixed(2);
+    var remain = targetGoal - totalSecurity; if(remain<0) remain=0;
+    var days = sec>0? Math.ceil(remain/sec) : 0;
+    var months = (days/30).toFixed(1);
+    var years = (days/365).toFixed(1);
+
+    html += '<p class="small" style="color:#94a3b8;margin-top:12px">Saving ₦' + sec + ' daily | Total: ₦' + totalSecurity + ' | Remain: ₦' + remain + '</p>';
+    html += '<div class="progress"><div class="progress-fill" style="width:' + pct + '%"></div></div>';
+    html += '<p class="small" style="color:#cbd5e1;margin-top:6px">' + pct + '% to ₦' + (targetGoal/1000000) + 'M</p>';
+
+    if(remain<=0){
+      html += '<p style="margin-top:10px;font-size:18px">🎉 YOU DON REACH ₦' + (targetGoal/1000000) + 'M! OGA!</p>';
+    } else {
+      html += '<p style="margin-top:10px">You go reach <b>₦' + (targetGoal/1000000) + 'M in ' + days + ' days</b><br><span class="small" style="color:#94a3b8">~' + months + ' months (~' + years + ' years)</span></p>';
     }
-    html += '</div></div>';
 
-    html += '<div class="card"><h4 style="margin:0 0 8px">⚠️ Spend Check</h4><input id="spendItem" type="text" inputmode="text" placeholder="Wetin you wan buy? e.g. Shoe" /><input id="spend" type="number" inputmode="numeric" placeholder="How much? e.g. 1500" /><select id="type"><option value="need">NEED</option><option value="liability">WANT - Bet/Shayo</option></select><button onclick="checkSpend()">Check Am</button><div id="msg" style="margin-top:12px;font-weight:bold"></div></div>';
+    // Show ladder up to chosen target
+    html += '<div style="margin-top:16px;border-top:1px solid #334155;padding-top:12px"><p class="small" style="color:#94a3b8">Your Journey:</p>';
+    var steps = [];
+    if(targetGoal<=2000000) steps=[1000000,2000000];
+    else if(targetGoal<=5000000) steps=[1000000,2000000,3000000,4000000,5000000];
+    else if(targetGoal<=10000000) steps=[1000000,2000000,3000000,5000000,7000000,10000000];
+    else steps=[1000000,5000000,10000000,20000000,50000000].filter(x=>x<=targetGoal);
+
+    for(var i=0;i<steps.length;i++){
+      var t=steps[i]; var r=t-totalSecurity; if(r<0)r=0; var d=sec>0?Math.ceil(r/sec):0; var done=totalSecurity>=t;
+      html+='<div class="road-item"><span>' + (done?'✅':'🎯') + ' <b style="color:' + (done?'#22c55e':'white') + '">₦' + (t>=1000000?(t/1000000)+'M':t) + '</b></span><span class="small" style="color:' + (done?'#22c55e':'#94a3b8') + '">' + (done?'DONE!':'In ' + d + 'd') + '</span></div>';
+    }
+    html+='</div><p class="small" style="color:#64748b;margin-top:12px">Small small dey fill basket!</p></div>';
+
+    html += '<div class="card"><h4 style="margin:0 0 8px">⚠️ Spend Check</h4><input id="spendItem" type="text" inputmode="text" placeholder="Wetin you wan buy? e.g. Shoe" /><input id="spend" type="number" inputmode="numeric" placeholder="How much? e.g. 1500" /><select id="type"><option value="need">NEED</option><option value="liability">WANT</option></select><button onclick="checkSpend()">Check Am</button><div id="msg" style="margin-top:12px;font-weight:bold"></div></div>';
     html += '<div class="card"><h4 style="margin:0 0 8px">📜 History</h4>';
     if(myHistory.length===0){ html += '<p class="small">No history yet.</p>'; }
-    else {
-      var totalNeed=0,totalWant=0;
-      for(var j=0;j<myHistory.length;j++){ var h=myHistory[j]; if(h.type==='need') totalNeed+=h.amount; else totalWant+=h.amount; html+='<div class="hist-item"><div><b>'+h.item+'</b> - ₦'+h.amount+' <span class="badge '+(h.type==='need'?'need':'want')+'">'+h.type.toUpperCase()+'</span><br><span class="small">'+h.date+'</span></div><div onclick="delHist('+j+')" style="color:#ef4444;font-weight:900;padding:8px">✕</div></div>'; }
-      html+='<p class="small" style="margin-top:12px;font-weight:700">NEED: ₦'+totalNeed+' | WANT: ₦'+totalWant+'</p><button onclick="clearHist()" style="background:#fee2e2;color:#991b1b">Clear History</button>';
-    }
+    else { var totalNeed=0,totalWant=0; for(var j=0;j<myHistory.length;j++){ var h=myHistory[j]; if(h.type==='need') totalNeed+=h.amount; else totalWant+=h.amount; html+='<div class="hist-item"><div><b>'+h.item+'</b> - ₦'+h.amount+' <span class="badge '+(h.type==='need'?'need':'want')+'">'+h.type.toUpperCase()+'</span><br><span class="small">'+h.date+'</span></div><div onclick="delHist('+j+')" style="color:#ef4444;font-weight:900;padding:8px">✕</div></div>'; } html+='<p class="small" style="margin-top:12px;font-weight:700">NEED: ₦'+totalNeed+' | WANT: ₦'+totalWant+'</p><button onclick="clearHist()" style="background:#fee2e2;color:#991b1b">Clear History</button>'; }
     html+='</div>';
-    html+='<div class="card"><h4 style="margin:0 0 12px">💜 How you feel?</h4><div class="mood-row"><button class="mood-btn" style="background:#dcfce7" onclick="mood(&quot;Happy&quot;)">😊</button><button class="mood-btn" style="background:#fef9c3" onclick="mood(&quot;Okay&quot;)">😐</button><button class="mood-btn" style="background:#fee2e2" onclick="mood(&quot;Stressed&quot;)">😔</button></div><p class="small" style="margin-top:10px">'+(localStorage.getItem('grfs_mood')||'')+'</p></div>';
   }
   app.innerHTML = html;
 }
@@ -88,6 +110,12 @@ function saveIncome(){
   localStorage.setItem('grfs_total_security', totalSecurity);
   render();
 }
+function changeTarget(){
+  var t = Number(document.getElementById('target').value);
+  targetGoal = t;
+  localStorage.setItem('grfs_target', t);
+  render();
+}
 function checkSpend(){
   var item = document.getElementById('spendItem').value.trim() || 'That thing';
   var a = Number(document.getElementById('spend').value);
@@ -99,7 +127,6 @@ function checkSpend(){
 }
 function delHist(i){ myHistory.splice(i,1); localStorage.setItem('grfs_history', JSON.stringify(myHistory)); render(); }
 function clearHist(){ if(confirm('Clear?')){ myHistory=[]; localStorage.setItem('grfs_history','[]'); render(); } }
-function mood(x){ localStorage.setItem('grfs_mood', x); render(); }
 render();
 </script>
 </body>
